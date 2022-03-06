@@ -1,3 +1,4 @@
+import math
 import random
 from random import randrange
 import pygame
@@ -22,19 +23,17 @@ def game():
     # Adding background
     screen.fill((240, 240, 240))
 
-    x_coordinates = []
-    y_coordinates = []
+    # Arrays to store the coordinates
+    preserved_coordinates = []
+    target_coordinates = []
 
-    # load resources
-    # x = 470
-    # y = 220
-    # x = randrange(0, 490)
-    # y = randrange(0, 240)
-
+    # Load resources
     agent = pygame.image.load("img\\x.png")
     target = pygame.image.load("img\\o.png")
     obstacle = pygame.image.load("img\\line.png")
     obstacle2 = obstacle3 = obstacle
+
+    # Scaling and rotating the obstacles
     obstacle = pygame.transform.scale(obstacle, (randrange(30, 50), randrange(15, 25)))
     obstacle = pygame.transform.rotate(obstacle, random.choice(range(0, 360 + 45 - (360 % 45), 45)))
     obstacle2 = pygame.transform.scale(obstacle2, (randrange(30, 50), randrange(15, 25)))
@@ -42,111 +41,142 @@ def game():
     obstacle3 = pygame.transform.scale(obstacle3, (randrange(30, 50), randrange(15, 25)))
     obstacle3 = pygame.transform.rotate(obstacle3, random.choice(range(0, 360 + 45 - (360 % 45), 45)))
 
-
+    # Give obstacles, target, and agent random coordinates and should cross each other
     # First obstacle coordinates
     obstaclex = (random.choice(range(0, 470 + 5 - (470 % 5), 5)))
     obstacley = (random.choice(range(0, 220 + 5 - (220 % 5), 5)))
-
+    # Add the objects coordinates to the preserved_coordinates array
     for i in range(obstaclex, obstaclex + obstacle.get_width() + 1):
-        x_coordinates.append(i)
-    for i in range(obstacley, obstacley + obstacle.get_height() + 1):
-        y_coordinates.append(i)
-    # print("x_coordinates= " + str(x_coordinates))
-    # print("obstaclex= " + str(obstaclex))
-    # print("shape x's size= " + str(obstaclex + obstacle.get_width()))
-    # print("obstacley= " + str(obstacley))
-    # print("shape y's size= " + str(obstacley + obstacle.get_height()))
-    # print("obstacle size= " + str(obstacle.get_size()))
+        for j in range(obstacley, obstacley + obstacle.get_height() + 1):
+            preserved_coordinates.append((i, j))
+    print("obstaclex= " + str(obstaclex))
+    print("obstacley= " + str(obstacley))
 
     # Second obstacle coordinates
     check_obstacle2 = False
+    obstacle2_width = obstacle2.get_width() + 1
+    obstacle2_height = obstacle2.get_height() + 1
+    # Check if the generated random coordinates do exist in the preserved_coordinates array
     while not check_obstacle2:
         obstacle2x = (random.choice(range(0, 470 + 5 - (470 % 5), 5)))
         obstacle2y = (random.choice(range(0, 220 + 5 - (220 % 5), 5)))
-        if not x_coordinates.__contains__(obstacle2x) and not y_coordinates.__contains__(obstacle2y):
+        if not preserved_coordinates.__contains__((obstacle2x, obstacle2y)) \
+                and not preserved_coordinates.__contains__((obstacle2x + obstacle2_width, obstacle2y)) \
+                and not preserved_coordinates.__contains__((obstacle2x, obstacle2y + obstacle2_height)) \
+                and not preserved_coordinates.__contains__(
+            (obstacle2x + obstacle2_width, obstacle2y + obstacle2_height)) \
+                and not preserved_coordinates.__contains__((math.floor(obstacle2x + obstacle2_width / 2),
+                                                            math.floor(obstacle2y + obstacle2_height / 2))):
             check_obstacle2 = True
 
-    for i in range(obstacle2x, obstacle2x + obstacle2.get_width() + 1):
-        x_coordinates.append(i)
-    for i in range(obstacle2y, obstacle2y + obstacle2.get_height() + 1):
-        y_coordinates.append(i)
+    # Add the new  generated coordinates to the preserved_coordinates array
+    for i in range(obstacle2x, obstacle2x + obstacle2_width):
+        for j in range(obstacle2y, obstacle2y + obstacle2_height):
+            preserved_coordinates.append((i, j))
     print("obstacle2x= " + str(obstacle2x))
     print("obstacle2y= " + str(obstacle2y))
 
     # Third obstacle coordinates
     check_obstacle3 = False
+    obstacle3_width = obstacle3.get_width() + 1
+    obstacle3_height = obstacle3.get_height() + 1
+    # Check if the generated random coordinates do exist in the preserved_coordinates array
     while not check_obstacle3:
         obstacle3x = (random.choice(range(0, 470 + 5 - (470 % 5), 5)))
         obstacle3y = (random.choice(range(0, 220 + 5 - (220 % 5), 5)))
-        if not x_coordinates.__contains__(obstacle3x) and not y_coordinates.__contains__(obstacle3y):
+        if not preserved_coordinates.__contains__((obstacle3x, obstacle3y)) \
+                and not preserved_coordinates.__contains__((obstacle3x + obstacle3_width, obstacle3y)) \
+                and not preserved_coordinates.__contains__((obstacle3x, obstacle3y + obstacle3_height)) \
+                and not preserved_coordinates.__contains__(
+            (obstacle3x + obstacle3_width, obstacle3y + obstacle3_height)) \
+                and not preserved_coordinates.__contains__((math.floor(obstacle3x + obstacle3_width / 2),
+                                                            math.floor(obstacle3y + obstacle3_height / 2))):
             check_obstacle3 = True
 
-    for i in range(obstacle3x, obstacle3x + obstacle3.get_width() + 1):
-        x_coordinates.append(i)
-    for i in range(obstacle3y, obstacle3y + obstacle3.get_height() + 1):
-        y_coordinates.append(i)
+    # Add the new  generated coordinates to the preserved_coordinates array
+    for i in range(obstacle3x, obstacle3x + obstacle3_width):
+        for j in range(obstacle3y, obstacle3y + obstacle3_height):
+            preserved_coordinates.append((i, j))
     print("obstacle3x= " + str(obstacle3x))
     print("obstacle3y= " + str(obstacle3y))
 
     # Target coordinates
-    check_target3 = False
-    while not check_target3:
+    check_target = False
+    target_width = target.get_width() + 1
+    target_height = target.get_height() + 1
+    # Check if the generated random coordinates do exist in the preserved_coordinates array
+    while not check_target:
         targetx = random.choice(range(0, 470 + 5 - (470 % 5), 5))
         targety = random.choice(range(0, 220 + 5 - (220 % 5), 5))
-        if not x_coordinates.__contains__(targetx) and not y_coordinates.__contains__(targety):
-            check_target3 = True
+        if not preserved_coordinates.__contains__((targetx, targety)) \
+                and not preserved_coordinates.__contains__((targetx + target_width, targety)) \
+                and not preserved_coordinates.__contains__((targetx, targety + target_height)) \
+                and not preserved_coordinates.__contains__((targetx + target_width, targety + target_height)) \
+                and not preserved_coordinates.__contains__((math.floor(targetx + target_width / 2),
+                                                            math.floor(targety + target_height / 2))):
+            check_target = True
 
-    for i in range(targetx, targetx + target.get_width() + 1):
-        x_coordinates.append(i)
-    for i in range(targety, targety + target.get_height() + 1):
-        y_coordinates.append(i)
+    # Add the new  generated coordinates to the preserved_coordinates array
+    for i in range(targetx, targetx + target_width):
+        for j in range(targety, targety + target_height):
+            preserved_coordinates.append((i, j))
+            target_coordinates.append((i, j))
     print("targetx= " + str(targetx))
     print("targety= " + str(targety))
 
     # Agent coordinates
-    check_target3 = False
-    while not check_target3:
-        x = random.choice(range(0, 470 + 5 - (470 % 5), 5))
-        y = random.choice(range(0, 220 + 5 - (220 % 5), 5))
-        if not x_coordinates.__contains__(x) and not y_coordinates.__contains__(y):
-            check_target3 = True
+    check_agent = False
+    agent_width = agent.get_width() + 1
+    agent_height = agent.get_height() + 1
+    # Check if the generated random coordinates do exist in the preserved_coordinates array
+    while not check_agent:
+        agentx = random.choice(range(0, 470 + 5 - (470 % 5), 5))
+        agenty = random.choice(range(0, 220 + 5 - (220 % 5), 5))
+        if not preserved_coordinates.__contains__((agentx, agenty)) \
+                and not preserved_coordinates.__contains__((agentx + agent_width, agenty)) \
+                and not preserved_coordinates.__contains__((agentx, agenty + agent_height)) \
+                and not preserved_coordinates.__contains__((agentx + agent_width, agenty + agent_height)) \
+                and not preserved_coordinates.__contains__((math.floor(agentx + agent_width / 2),
+                                                            math.floor(agenty + agent_height / 2))):
+            check_agent = True
 
-    # for i in range(x, x + agent.get_width() + 1):
-    #     x_coordinates.append(i)
-    # for i in range(y, y + agent.get_height() + 1):
-    #     y_coordinates.append(i)
-    print("x= " + str(x))
-    print("y= " + str(y))
+    print("x= " + str(agentx))
+    print("y= " + str(agenty))
+    print("0.5 x= " + str(math.floor((agentx + agent_width / 2))))
+    print("0.5 y= " + str(math.floor(agenty + agent_height / 2)))
+    print("x + agent_width= " + str(agentx + agent_width))
+    print("y + agent_height= " + str(agenty + agenty + agent_height))
+    print(preserved_coordinates)
 
+    # Put the objects to the screen
     screen.blit(obstacle, (obstaclex, obstacley))
-
     screen.blit(obstacle2, (obstacle2x, obstacle2y))
     screen.blit(obstacle3, (obstacle3x, obstacle3y))
     screen.blit(target, (targetx, targety))
-    screen.blit(agent, (x, y))
-    print(obstacle.get_size())
-    # print(obstacle2.get_size())
-    # print(obstacle3.get_size())
-    print(agent.get_size())
-    # print(target.get_size())
+    screen.blit(agent, (agentx, agenty))
 
+    # Create a circle to draw the path to the target
+    agent_centerx = agentx + agent_width / 2
+    agent_centery = agenty + agent_height / 2
+    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
+
+    # Do action while the game is on
     running = True
     while running:
-        #
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    y -= 30
-                    block_moment(screen, agent, x, y)
+                    agent_centery -= 15
+                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
                 elif event.key == pygame.K_DOWN:
-                    y += 30
-                    block_moment(screen, agent, x, y)
+                    agent_centery += 15
+                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
                 elif event.key == pygame.K_RIGHT:
-                    x += 30
-                    block_moment(screen, agent, x, y)
+                    agent_centerx += 15
+                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
                 elif event.key == pygame.K_LEFT:
-                    x -= 30
-                    block_moment(screen, agent, x, y)
+                    agent_centerx -= 15
+                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
             elif event.type == pygame.QUIT:
                 running = False
 
