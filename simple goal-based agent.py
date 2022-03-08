@@ -160,24 +160,72 @@ def game():
     agent_centery = agenty + agent_height / 2
     pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
 
+    distance_x = None
+    distance_y = None
+    if agentx < targetx and agenty < targety:
+        # state 1
+        print("state 1")
+        distance_x = targetx - agentx
+        distance_y = targety - agenty
+        # goal_reached = False
+        # while not goal_reached:
+        for i in range(agentx + math.floor(agent_width / 2), (agentx + math.floor(agent_width / 2)) + distance_x, 15):
+            pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+        for j in range(agenty + math.floor(agent_height / 2), (agenty + math.floor(agent_height / 2)) + distance_y, 15):
+            pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+    elif agentx < targetx and agenty > targety:
+        # state 2
+        print("state 2")
+        distance_x = targetx - agentx
+        # while not goal_reached:
+        for i in range(agentx + math.floor(agent_width / 2), (agentx + math.floor(agent_width / 2)) + distance_x, 15):
+            pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+        for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), -15):
+            pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+    elif agentx > targetx and agenty > targety:
+        # state 3
+        print("state 3")
+        # goal_reached = False
+        # while not goal_reached:
+        for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), +15):
+            pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+        for j in range(targety + math.floor(target_height / 2), agenty + math.floor(agent_height / 2), 15):
+            pygame.draw.circle(screen, (255, 0, 0), (targetx + math.floor(target_width / 2), j), 5)
+    elif agentx > targetx and agenty < targety:
+        # state 4
+        print("state 4")
+        distance_x = targetx - agentx
+        # while not goal_reached:
+        for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), 15):
+            pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+        for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), 15):
+            pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+    elif agentx == targetx:
+        print("state 5")
+        if agenty > targety:
+            print("state 5 1")
+            for j in range(targety + math.floor(target_height / 2), agenty + math.floor(agent_height / 2), 15):
+                pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2), j), 5)
+        elif agenty < targety:
+            print("state 5 2")
+            for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), 15):
+                pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2), j), 5)
+    elif agenty == targety:
+        print("state 6")
+        if agentx > targetx:
+            print("state 6 1")
+            for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), 15):
+                pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+        elif agenty < targety:
+            print("state 6 2")
+            for i in range((agentx + math.floor(agent_width / 2)), targetx + math.floor(target_width / 2), 15):
+                pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+
     # Do action while the game is on
     running = True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    agent_centery -= 15
-                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
-                elif event.key == pygame.K_DOWN:
-                    agent_centery += 15
-                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
-                elif event.key == pygame.K_RIGHT:
-                    agent_centerx += 15
-                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
-                elif event.key == pygame.K_LEFT:
-                    agent_centerx -= 15
-                    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
-            elif event.type == pygame.QUIT:
+            if event.type == pygame.QUIT:
                 running = False
 
         # Update the screen
