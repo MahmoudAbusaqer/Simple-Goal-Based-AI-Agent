@@ -26,6 +26,8 @@ def game():
     # Arrays to store the coordinates
     preserved_coordinates = []
     target_coordinates = []
+    obstacles_coordinates = []
+    path_coordinates = []
 
     # Load resources
     agent = pygame.image.load("img\\x.png")
@@ -49,8 +51,7 @@ def game():
     for i in range(obstaclex, obstaclex + obstacle.get_width() + 1):
         for j in range(obstacley, obstacley + obstacle.get_height() + 1):
             preserved_coordinates.append((i, j))
-    print("obstaclex= " + str(obstaclex))
-    print("obstacley= " + str(obstacley))
+            obstacles_coordinates.append((i, j))
 
     # Second obstacle coordinates
     check_obstacle2 = False
@@ -73,8 +74,7 @@ def game():
     for i in range(obstacle2x, obstacle2x + obstacle2_width):
         for j in range(obstacle2y, obstacle2y + obstacle2_height):
             preserved_coordinates.append((i, j))
-    print("obstacle2x= " + str(obstacle2x))
-    print("obstacle2y= " + str(obstacle2y))
+            obstacles_coordinates.append((i, j))
 
     # Third obstacle coordinates
     check_obstacle3 = False
@@ -97,8 +97,7 @@ def game():
     for i in range(obstacle3x, obstacle3x + obstacle3_width):
         for j in range(obstacle3y, obstacle3y + obstacle3_height):
             preserved_coordinates.append((i, j))
-    print("obstacle3x= " + str(obstacle3x))
-    print("obstacle3y= " + str(obstacle3y))
+            obstacles_coordinates.append((i, j))
 
     # Target coordinates
     check_target = False
@@ -121,8 +120,6 @@ def game():
         for j in range(targety, targety + target_height):
             preserved_coordinates.append((i, j))
             target_coordinates.append((i, j))
-    print("targetx= " + str(targetx))
-    print("targety= " + str(targety))
 
     # Agent coordinates
     check_agent = False
@@ -140,14 +137,6 @@ def game():
                                                             math.floor(agenty + agent_height / 2))):
             check_agent = True
 
-    print("x= " + str(agentx))
-    print("y= " + str(agenty))
-    print("0.5 x= " + str(math.floor((agentx + agent_width / 2))))
-    print("0.5 y= " + str(math.floor(agenty + agent_height / 2)))
-    print("x + agent_width= " + str(agentx + agent_width))
-    print("y + agent_height= " + str(agenty + agenty + agent_height))
-    print(preserved_coordinates)
-
     # Put the objects to the screen
     screen.blit(obstacle, (obstaclex, obstacley))
     screen.blit(obstacle2, (obstacle2x, obstacle2y))
@@ -155,11 +144,7 @@ def game():
     screen.blit(target, (targetx, targety))
     screen.blit(agent, (agentx, agenty))
 
-    # Create a circle to draw the path to the target
-    agent_centerx = agentx + agent_width / 2
-    agent_centery = agenty + agent_height / 2
-    pygame.draw.circle(screen, (255, 0, 0), (agent_centerx, agent_centery), 5)
-
+    # Create and draw the shortest path to the target
     distance_x = None
     distance_y = None
     if agentx < targetx and agenty < targety:
@@ -167,39 +152,90 @@ def game():
         print("state 1")
         distance_x = targetx - agentx
         distance_y = targety - agenty
-        # goal_reached = False
-        # while not goal_reached:
         for i in range(agentx + math.floor(agent_width / 2), (agentx + math.floor(agent_width / 2)) + distance_x, 15):
             pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+            path_coordinates.append((i, agenty + math.floor(agent_height / 2)))
         for j in range(agenty + math.floor(agent_height / 2), (agenty + math.floor(agent_height / 2)) + distance_y, 15):
             pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+            path_coordinates.append((agentx + math.floor(agent_width / 2) + distance_x, j))
+
+        path_set = set(path_coordinates)
+        obstacles_set = set(obstacles_coordinates)
+        if path_set & obstacles_set:
+            print("***there are some commn values")
+            for i in range(agentx + math.floor(agent_width / 2), (agentx + math.floor(agent_width / 2)) + distance_x,
+                           15):
+                pygame.draw.circle(screen, (0, 255, 0), (i, targety + math.floor(target_height / 2)), 5)
+            for j in range(agenty + math.floor(agent_height / 2), (targety + math.floor(target_height / 2)),
+                           15):
+                pygame.draw.circle(screen, (0, 255, 0), (agentx + math.floor(agent_width / 2), j), 5)
+            print("there are NO commn values***")
+        else:
+            print("there are NO commn values***")
+
     elif agentx < targetx and agenty > targety:
         # state 2
         print("state 2")
         distance_x = targetx - agentx
-        # while not goal_reached:
         for i in range(agentx + math.floor(agent_width / 2), (agentx + math.floor(agent_width / 2)) + distance_x, 15):
             pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+            path_coordinates.append((i, agenty + math.floor(agent_height / 2)))
         for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), -15):
             pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+            path_coordinates.append((agentx + math.floor(agent_width / 2) + distance_x, j))
+        path_set = set(path_coordinates)
+        obstacles_set = set(obstacles_coordinates)
+        if path_set & obstacles_set:
+            print("***there are some commn values")
+            for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)),
+                           -15):
+                pygame.draw.circle(screen, (0, 255, 0), (i, targety + math.floor(target_height / 2)), 5)
+            for j in range(targety + math.floor(target_height / 2), agenty + math.floor(agent_height / 2), +15):
+                pygame.draw.circle(screen, (0, 255, 0), (agentx + math.floor(agent_width / 2), j), 5)
+            print("there are NO commn values***")
+        else:
+            print("there are NO commn values***")
     elif agentx > targetx and agenty > targety:
         # state 3
         print("state 3")
-        # goal_reached = False
-        # while not goal_reached:
         for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), +15):
             pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+            path_coordinates.append((i, agenty + math.floor(agent_height / 2)))
         for j in range(targety + math.floor(target_height / 2), agenty + math.floor(agent_height / 2), 15):
             pygame.draw.circle(screen, (255, 0, 0), (targetx + math.floor(target_width / 2), j), 5)
+            path_coordinates.append((targetx + math.floor(target_width / 2), j))
+        path_set = set(path_coordinates)
+        obstacles_set = set(obstacles_coordinates)
+        if path_set & obstacles_set:
+            print("***there are some commn values")
+            for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), +15):
+                pygame.draw.circle(screen, (0, 255, 0), (i, targety + math.floor(target_height / 2)), 5)
+            for j in range(targety + math.floor(target_height / 2), agenty + math.floor(agent_height / 2), 15):
+                pygame.draw.circle(screen, (0, 255, 0), (agentx + math.floor(agent_width / 2), j), 5)
+            print("there are NO commn values***")
+        else:
+            print("there are NO commn values***")
     elif agentx > targetx and agenty < targety:
         # state 4
         print("state 4")
         distance_x = targetx - agentx
-        # while not goal_reached:
         for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), 15):
             pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
+            path_coordinates.append((i, agenty + math.floor(agent_height / 2)))
         for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), 15):
             pygame.draw.circle(screen, (255, 0, 0), (agentx + math.floor(agent_width / 2) + distance_x, j), 5)
+            path_coordinates.append((agentx + math.floor(agent_width / 2) + distance_x, j))
+        path_set = set(path_coordinates)
+        obstacles_set = set(obstacles_coordinates)
+        if path_set & obstacles_set:
+            print("***there are some commn values")
+            for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), 15):
+                pygame.draw.circle(screen, (0, 255, 0), (i, targety + math.floor(agent_height / 2)), 5)
+            for j in range(agenty + math.floor(agent_height / 2), targety + math.floor(target_height / 2), 15):
+                pygame.draw.circle(screen, (0, 255, 0), (agentx + math.floor(agent_width / 2), j), 5)
+            print("there are NO commn values***")
+        else:
+            print("there are NO commn values***")
     elif agentx == targetx:
         print("state 5")
         if agenty > targety:
@@ -216,7 +252,7 @@ def game():
             print("state 6 1")
             for i in range(targetx + math.floor(target_width / 2), (agentx + math.floor(agent_width / 2)), 15):
                 pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
-        elif agenty < targety:
+        elif agentx < targetx:
             print("state 6 2")
             for i in range((agentx + math.floor(agent_width / 2)), targetx + math.floor(target_width / 2), 15):
                 pygame.draw.circle(screen, (255, 0, 0), (i, agenty + math.floor(agent_height / 2)), 5)
